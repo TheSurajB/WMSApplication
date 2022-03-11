@@ -1,0 +1,112 @@
+﻿@page "/addvehicle"
+@inject IVehicleService VehicleService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Vehicle List</PageTitle>
+
+<h1>Vehicle List</h1>
+
+ <EditForm Model="vehicle" OnValidSubmit="AddOrUpdateVehicle">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+     <div class="container">
+  <div class="row">
+       <div class="col-sm">
+        <div class="row g-3">
+            <div class="col-md-6">
+                 <label for="title" class="form-label">Title</label>
+                <InputText id="VehicleNo" @bind-Value="vehicle.VehicleNo" class="form-control"></InputText>
+           </div>
+
+           <div class="col-md-6">
+             <label for="VehicleTW" class="form-label">Vehicle TW</label>           
+            <InputNumber id="VehicleTW" @bind-Value="vehicle.VehicleTW" class="form-control"></InputNumber>
+           </div>
+
+         <div class="col-md-6">
+             <label for="VehicleTW" class="form-label">Vehicle TW</label>           
+           <InputSelect  @bind-Value="vehicle.VehicleNo" class="form-select">
+                        @foreach (var productType in vehicleList)
+                {
+                        <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                }
+            </InputSelect>
+        </div>
+         @* <div class="mb-0">
+            <img src="@product.ImageUrl" />
+            </div>*@
+        <div class="col-12">
+              <label for="VehicleType" class="form-label">VehicleType</label>
+              <InputTextArea id="VehicleType" @bind-Value="vehicle.VehicleType" class="form-control"></InputTextArea>
+        </div>
+        </div>
+        </div>
+         <div class="col-sm">
+      One of three columns
+    </div>
+        <hr />
+        <div class="header">
+            <div class="col">Product Type / Variant</div>
+            <div class="col">Price</div>
+            <div class="col">Original Price</div>
+            <div class="col">Visible</div>
+            <div class="col"></div>
+        </div>
+         <button type="submit" class="btn btn-primary float-end">@btnText</button>
+         </div>
+         </div>
+    <ValidationSummary></ValidationSummary>
+        </EditForm>
+
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    Vehicle vehicle = new Vehicle();
+    private AgencyModel[]? agencyModels;
+    private List<Vehicle> vehicleList  =  new List<Vehicle>();
+    string btnText = "";
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            btnText = "Add";
+            await Task.Yield();
+            vehicleList = await VehicleService.GetVehicles();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+
+    }
+
+    async void AddOrUpdateVehicle()
+    {
+        var vehObj = vehicle;
+        string str = "gdd";
+        await Task.Yield();
+        //if (product.IsNew)
+        //{
+        //    var result = await ProductService.CreateProduct(product);
+        //    NavigationManager.NavigateTo($"admin/product/{result.Id}");
+        //}
+        //else
+        //{
+        //  product.IsNew = false;
+        // vehicle = await VehicleService.UpdateProduct(product);
+        NavigationManager.NavigateTo($"admin/product/{vehicle.VehicleID}", true);
+        // }
+    }
+    async void DeleteVehicle()
+    {
+        await Task.Yield();
+        //bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm",
+        //    $"Do you really want to delete '{product.Title}'?");
+        //if (confirmed)
+        //{
+        //    await ProductService.DeleteProduct(product);
+        //    NavigationManager.NavigateTo("admin/products");
+        //}
+    }
+}

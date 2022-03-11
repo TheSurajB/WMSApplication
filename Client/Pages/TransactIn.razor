@@ -1,0 +1,181 @@
+﻿@page "/transactin"
+@inject ICommonService CommonService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Vehicle List</PageTitle>
+
+<h1>Vehicle List</h1>
+
+ <EditForm Model="transact" OnValidSubmit="AddOrUpdateVehicle">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+ <div class="container">
+  <div class="row">
+       <div class="col-sm">
+        <div class="row g-3">
+               <div class="col-md-6">
+                 <label for="LogsheetNo" class="form-label">Logsheet</label>
+                <InputNumber id="LogsheetNo" @bind-Value="transact.LogsheetNo" class="form-control"></InputNumber>
+             </div>
+                <div class="col-md-6">
+                 <label for="TransDateTimeIn" class="form-label">Date</label>
+               @* <InputDate id="TransDateTimeIn" @bind-Value="transact.TransDateTimeIn" class="form-control"></InputDate>*@
+             </div>
+            <div class="col-md-6">
+                 <label for="title" class="form-label">Zone</label>
+                  <InputSelect  @bind-Value="transact.Zone" class="form-select">
+                        @foreach (var productType in vehicleList)
+                {
+                        <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                }
+            </InputSelect>
+            </div>
+             <div class="col-md-6">
+                 <label for="DisplayTime" class="form-label">Time</label>
+                @*<InputDate id="DisplayTime" @bind-Value="transact.DisplayTime" class="form-control"></InputDate>*@
+             </div>
+              <div class="col-md-6">
+             <label for="VehicleTW" class="form-label">Vehicle No</label>           
+           <InputSelect  @bind-Value="transact.VehicleNo" class="form-select">
+                        @foreach (var productType in vehicleList)
+                {
+                        <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                }
+            </InputSelect>
+        </div>
+           <div class="col-md-6">
+             <label for="WeightIn" class="form-label">Gross Weight</label>           
+             <InputNumber id="WeightIn" @bind-Value="transact.WeightIn" class="form-control"></InputNumber>
+           </div>
+           <div class="col-md-6">
+             <label for="TypeOfMaterial" class="form-label">Solid Wast</label>           
+           <InputSelect  @bind-Value="transact.TypeOfMaterial" class="form-select">
+                        @foreach (var productType in vehicleList)
+                {
+                        <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                }
+            </InputSelect>
+           </div>
+       <div class="col-md-6">
+                 <label for="TareWt" class="form-label">Tare Wt</label>
+                <InputNumber id="TareWt" @bind-Value="transact.TareWt" class="form-control"></InputNumber>
+             </div>
+              <div class="col-md-6">
+             <label for="Agency" class="form-label">Agency</label>           
+           <InputSelect  @bind-Value="transact.Agency" class="form-select">
+                        @foreach (var productType in vehicleList)
+                {
+                        <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                }
+            </InputSelect>
+           </div>
+            <div class="col-md-6">
+             <label for="TPCCover" class="form-label">TCP Cover</label>           
+           <InputSelect  @bind-Value="transact.TPCCover" class="form-select">
+                        @foreach (var productType in vehicleList)
+                {
+                        <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                }
+            </InputSelect>
+           </div>
+            <div class="col-md-6">
+             <label for="Ward" class="form-label">Ward</label>           
+           <InputSelect  @bind-Value="transact.Ward" class="form-select">
+                        @foreach (var productType in vehicleList)
+                {
+                        <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                }
+            </InputSelect>
+           </div>
+            <div class="col-md-6">
+             <label for="OnBMCDuty" class="form-label">BMC Duity</label>           
+           <InputSelect  @bind-Value="transact.OnBMCDuty" class="form-select">
+                        @foreach (var productType in vehicleList)
+                {
+                        <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                }
+            </InputSelect>
+           </div>
+            <div class="col-md-6">
+             <label for="WorkCode" class="form-label">Work Code</label>           
+           <InputSelect  @bind-Value="transact.WorkCode" class="form-select">
+                        @foreach (var productType in vehicleList)
+                {
+                        <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                }
+            </InputSelect>
+           </div>
+         @* <div class="mb-0">
+            <img src="@product.ImageUrl" />
+            </div>*@
+      @*  <div class="col-12">
+              <label for="VehicleType" class="form-label">VehicleType</label>
+              <InputTextArea id="VehicleType" @bind-Value="vehicle.VehicleType" class="form-control"></InputTextArea>
+        </div>*@
+        </div>
+        </div>
+         <div class="col-sm">
+      One of three columns
+    </div>
+        <hr />
+       
+         <button type="submit" class="btn btn-primary float-end">@btnText</button>
+          <button type="button" class="btn btn-primary float-end">Store</button>
+           <button type="button" class="btn btn-primary float-end">update</button>
+         </div>
+         </div>
+    <ValidationSummary></ValidationSummary>
+        </EditForm>
+
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    Transact transact = new Transact();
+    private AgencyModel[]? agencyModels;
+    private List<Vehicle> vehicleList  =  new List<Vehicle>();
+    string btnText = "";
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            btnText = "Add";
+            await Task.Yield();
+            vehicleList = await CommonService.GetVehicles();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+
+    }
+
+    async void AddOrUpdateVehicle()
+    {
+        var vehObj = transact;
+        string str = "gdd";
+        await Task.Yield();
+        //if (product.IsNew)
+        //{
+        //    var result = await ProductService.CreateProduct(product);
+        //    NavigationManager.NavigateTo($"admin/product/{result.Id}");
+        //}
+        //else
+        //{
+        //  product.IsNew = false;
+        // vehicle = await VehicleService.UpdateProduct(product);
+        NavigationManager.NavigateTo($"admin/product/{transact.SlipSrNo}", true);
+        // }
+    }
+    async void DeleteVehicle()
+    {
+        await Task.Yield();
+        //bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm",
+        //    $"Do you really want to delete '{product.Title}'?");
+        //if (confirmed)
+        //{
+        //    await ProductService.DeleteProduct(product);
+        //    NavigationManager.NavigateTo("admin/products");
+        //}
+    }
+}

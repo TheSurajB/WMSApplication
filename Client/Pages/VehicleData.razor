@@ -1,0 +1,54 @@
+﻿@page "/vehicledata"
+@inject IVehicleService VehicleService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Vehicle List</PageTitle>
+
+<h1>Vehicle List</h1>
+
+
+
+@if (vehicles == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>VehicleID</th>
+                <th>VehicleNo</th>
+                <th>VehicleType</th>                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vehicle in vehicles)
+            {
+                <tr>
+                    <td>@vehicle.VehicleID</td>
+                    <td>@vehicle.VehicleNo</td>
+                    <td>@vehicle.VehicleType</td>
+                   
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Vehicle> vehicles;
+    private AgencyModel[]?  agencyModels;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try{
+            vehicles = await VehicleService.GetVehicles();        
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+
+    }
+}
