@@ -1,5 +1,139 @@
-﻿<h3>TransactOut</h3>
+﻿@page "/transactout"
+@inject ICommonService CommonService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Transact Out</PageTitle>
+
+<h1>Transact Out</h1>
+
+
+<EditForm Model="transact" OnValidSubmit="AddOrUpdateVehicle">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="SlipSrNo" class="form-label">Slip Sr No.</label>
+                        <InputText id="SlipSrNo" Value="@transact.SlipSrNo" ValueChanged="OnValueChanged" ValueExpression="() => transact.SlipSrNo" class="form-control"></InputText>
+                    </div>
+                     <div class="col-md-6">
+                        <label for="WeightIn" class="form-label">Gross Weight</label>
+                        <InputNumber id="WeightIn" @bind-Value="transact.WeightIn" class="form-control"></InputNumber>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="VehicleNo" class="form-label">Vehicle No.</label>
+                        <InputText id="VehicleNo" @bind-Value="transact.VehicleNo" class="form-control"></InputText>
+                    </div>
+                     <div class="col-md-6">
+                        <label for="WeightOut" class="form-label">Unload Weight</label>
+                        <InputNumber id="WeightOut" @bind-Value="transact.WeightOut" class="form-control"></InputNumber>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="LogsheetNo" class="form-label">Logsheet No.</label>
+                        <InputNumber id="LogsheetNo" @bind-Value="transact.LogsheetNo" class="form-control"></InputNumber>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="ActualNetWeight" class="form-label">Net Weight</label>
+                        <InputNumber id="ActualNetWeight" @bind-Value="transact.ActualNetWeight" class="form-control"></InputNumber>
+                    </div>    
+                    <div class="col-md-6">
+                        <label for="Agency" class="form-label">Agency Name </label>
+                        <InputText id="AgencyName" @bind-Value="transact.Agency" class="form-control"></InputText>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="TransDateTimeOut" class="form-label">Out Date</label>
+                        <InputText id="TransDateTimeOut"  @bind-Value="@TransDateTimeOut" class="form-control"></InputText>
+                    </div>              
+                  
+                    <div class="col-12">
+                        <label for="Remarks" class="form-label">Remark</label>
+                        <InputTextArea id="Remarks" @bind-Value="transact.Remarks" class="form-control"></InputTextArea>
+                        </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                One of three columns
+            </div>
+            <hr />
+
+            <button type="submit" class="btn btn-primary mr-2">@btnText</button>
+            <button type="button" class="btn btn-primary mr-2">Store</button>
+            <button type="button" class="btn btn-primary mr-2">update</button>
+        </div>
+    </div>
+    <ValidationSummary></ValidationSummary>
+</EditForm>
+
+
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
+    public int JobCodeEntryType { get; set; }
+    [Parameter] public string InitialText { get; set; } = "--Select--";
+    private System.Threading.Timer? timer;
+    Transact transact = new Transact();
+
+    string btnText = "";
+    string TransDateTimeOut = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // transact.DisplayTime = DateTime.Now.ToShortTimeString();
+        try
+        {
+
+            btnText = "Update";        
+
+            timer = new System.Threading.Timer(async (object? stateInfo) =>
+        {
+            TransDateTimeOut = DateTime.Now.ToString("dd-MM-yyyy HH:mm");
+            StateHasChanged();
+        }, new System.Threading.AutoResetEvent(false), 1, 1); 
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+
+    }
+
+    async void AddOrUpdateVehicle()
+    {
+        var vehObj = transact;
+        transact.UpdatedByOut = 1;
+     
+        transact.TransDateTimeOut = DateTime.Now;    
+        var result =await CommonService.UpdateTransactData(transact);
+        var tt = result;
+        // transactList = await CommonService.GetTransactData();
+        //if (product.IsNew)
+        //{
+        //    var result = await ProductService.CreateProduct(product);
+        //    NavigationManager.NavigateTo($"admin/product/{result.Id}");
+        //}
+        //else
+        //{
+        //  product.IsNew = false;
+        // vehicle = await VehicleService.UpdateProduct(product);
+        //  NavigationManager.NavigateTo($"admin/product/{transact.SlipSrNo}", true);
+        // }
+    }
+    async void DeleteVehicle()
+    {
+        await Task.Yield();
+
+    }
+    async void OnValueChanged(string value)
+    {
+        var result = await CommonService.GetTransactDataBySlipNo(value);
+        transact = result;
+        transact.ActualNetWeight = transact.WeightIn - transact.WeightOut;
+        transact.SlipSrNo = value;
+       // return Task.CompletedTask;
+    } 
 
 }

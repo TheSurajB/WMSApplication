@@ -44,6 +44,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
-       //  NavigationManager.NavigateTo("/vehicledata");
+     NavigationManager.NavigateTo("/vehicledata");
     }
 }

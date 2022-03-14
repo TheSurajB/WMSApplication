@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace WMSAPP.Shared
 {
-    internal class UserModel
+    public class UserModel
     {
         public int? UserID { get; set; }
         public string? Username { get; set; }
         public string? Password { get; set; }
-        public string? WBId { get; set; }
+        public int? WBId { get; set; }
        // public decimal? VehicleGKW { get; set; }
         public int? IsActive { get; set; }
+
+        public int? RoleId { get; set; }
     }
 }
