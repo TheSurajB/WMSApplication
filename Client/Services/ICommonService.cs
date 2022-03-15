@@ -4,6 +4,7 @@ namespace WMSAPP.Client.Services
 {
     public interface ICommonService
     {
+        Task<List<WeighBridgeModel>> GetWeighBridges();
         Task<List<WorkCodeModel>> GetZones();
         Task<List<Vehicle>> GetVehicles();
         Task<List<WardModel>> GetWards();
@@ -16,5 +17,6 @@ namespace WMSAPP.Client.Services
         Task<List<Transact>> GetTransactData();
         Task<Transact> GetTransactDataBySlipNo(string id);
         Task<UserModel> Login(UserModel transact);
+     
     }
 }

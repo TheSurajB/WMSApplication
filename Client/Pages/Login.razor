@@ -1,9 +1,8 @@
 ﻿@page "/"
 @inject ICommonService  CommonService
 @inject NavigationManager NavigationManager
-@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
-@inject ProtectedLocalStorage ProtectedLocalStore
-
+@inject Blazored.LocalStorage.ILocalStorageService iLocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
 
 
 <EditForm Model="user" OnValidSubmit="HandleLogin">
@@ -35,10 +34,8 @@
               <div class="d-grid">
                 <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">Sign
                   in</button>
-                   <button class="btn btn-primary btn-login text-uppercase fw-bold" type="button">Sign
-                  in</button>
-              </div>
-             
+                  
+              </div>             
             </div>
           </div>
         </div>
@@ -61,8 +58,18 @@
         //await AuthStateProvider.GetAuthenticationStateAsync();
         UserModel objUser = new UserModel();
         objUser = await CommonService.Login(user);
-        var usr = objUser;
+        if (objUser != null)
+        {
+            await iLocalStorage.SetItemAsync<UserModel?>("UserModel", objUser);  
+            await iLocalStorage.SetItemAsync<string?>("username", objUser.Username);   
+            await AuthStateProvider.GetAuthenticationStateAsync();
+            NavigationManager.NavigateTo("/index"); 
+        }
+        else
+        {
+            
+        }
         await Task.Yield();
-        NavigationManager.NavigateTo("/index");       
+             
     }
 }

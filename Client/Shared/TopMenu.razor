@@ -1,0 +1,43 @@
+﻿@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider 
+ 
+@*@if(@UserName != "")
+{*@
+    <AuthorizeView>
+                <Authorized>
+            <a href="#" target="_blank">@UserName</a>
+            <a href="logout" class="btn btn-info" onclick="@Logout">  
+        Logout
+    <span class="badge badge-pill badge-light"></span>
+</a>
+ </Authorized> 
+      </AuthorizeView>
+                   
+@*}
+*@
+
+@code {
+    private UserModel userModel;
+    string UserName ="";
+    protected override async Task OnInitializedAsync()
+    {
+        UserModel user = await LocalStorage.GetItemAsync<UserModel>("UserModel");
+        if(user!=null){
+            UserName = user.Username;
+        }
+        else
+        {
+              NavigationManager.NavigateTo("/"); 
+        }
+        await Task.Yield();
+    }
+  
+      private async void Logout()
+    {
+         await LocalStorage.RemoveItemAsync("UserModel");
+         await LocalStorage.RemoveItemAsync("username");
+         await AuthStateProvider.GetAuthenticationStateAsync();
+    }
+   
+}

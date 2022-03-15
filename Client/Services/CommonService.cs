@@ -20,7 +20,10 @@ namespace WMSAPP.Client.Services
         {
             return await _httpClient.GetFromJsonAsync<List<WardModel>>("api/common/getwards");
         }
-
+        public async Task<List<WeighBridgeModel>> GetWeighBridges()
+        {
+            return await _httpClient.GetFromJsonAsync<List<WeighBridgeModel>>("api/common/getweighbridge");
+        }
         public async Task<List<WorkCodeModel>> GetWorkCodes(WorkCodeModel workCodeModel)
         {
            

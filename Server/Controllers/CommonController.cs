@@ -12,6 +12,28 @@ namespace WMSAPP.Server.Controllers
 
         AllReportContent allReportContent = new AllReportContent();
 
+        [HttpGet("getweighbridge")]
+        public async Task<ActionResult<List<WeighBridgeModel>>> GetWeighBridges()
+        {
+
+            DataSet ds = allReportContent.GetWeighBridge();
+            List<WeighBridgeModel> weighBridgeModelList = new List<WeighBridgeModel>();
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    weighBridgeModelList.Add(new WeighBridgeModel
+                    {
+                        WBID = Convert.ToInt32(ds.Tables[0].Rows[i]["WBID"]),
+                        WBName = Convert.ToString(ds.Tables[0].Rows[i]["WBName"]),
+                    });
+                }
+                // cbvehicleno.Items.Insert(0, "--Select Vehicle No--");              
+            }
+            await Task.Yield();
+            return Ok(weighBridgeModelList);
+        }
+
 
         [HttpGet("getzones")]
         public async Task<ActionResult<List<WorkCodeModel>>> GetZones()

@@ -37,6 +37,21 @@ namespace WMSAPP.Server.Repository
                 throw new Exception(w.Message);
             }
         }
+
+        public DataSet GetWeighBridge()
+        {
+            DataSet ds;
+            try
+            {
+                sQLDAL = new SQLDAL();
+                ds = sQLDAL.ExecuteDatasetSP("spWeighBridge_GetWeighBridges");
+            }
+            catch (Exception w)
+            {
+                throw new Exception(w.Message);
+            }
+            return ds;
+        }
         public DataSet GetWards()
         {
             DataSet ds;
