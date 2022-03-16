@@ -168,7 +168,7 @@ namespace WMSAPP.Server.Repository
             }
             return ds;
         }
-        public DataSet AddTransactData(Transact transactModel)
+        public DataSet AddTransactData(TransactInModel transactModel)
         {
             try
             {
@@ -199,7 +199,7 @@ namespace WMSAPP.Server.Repository
                 par[7].Value = transactModel.PrintStatus;
                 par[8].Value = transactModel.WeightIn;
                 par[9].Value = transactModel.UpdatedByIn;
-                par[10].Value = transactModel.WorkCode;
+                par[10].Value = transactModel.WorkCodeID;
                 par[11].Value = transactModel.JobCodeEntryType;
                 par[12].Value = transactModel.OnBMCDuty;
                 par[13].Value = transactModel.TPCCover;
@@ -213,7 +213,7 @@ namespace WMSAPP.Server.Repository
             }
         }
 
-        public DataSet UpdateTransactData(Transact transactModel)
+        public DataSet UpdateTransactData(TransactOutModel transactModel)
         {
             try
             {
@@ -313,5 +313,29 @@ namespace WMSAPP.Server.Repository
             }
             return ds;
         }
+
+        public DataSet GetLogsheetData(Transact transactModel)
+        {
+            try
+            {
+                sQLDAL = new SQLDAL();
+                SqlParameter[] par ={
+                                         new SqlParameter("@LogsheetNo",SqlDbType.NVarChar),
+                                         new SqlParameter("@Zone",SqlDbType.NVarChar),
+
+                                    };
+                par[0].Value = transactModel.LogsheetNo;
+                par[1].Value = transactModel.Zone;           
+               
+                DataSet ds = sQLDAL.ExecuteDatasetSP("spLogsheetMaster_GetVehicleNo", par);
+                return ds;
+
+            }
+            catch (Exception w)
+            {
+                throw new Exception(w.Message);
+            }
+        }
+
     }
 }

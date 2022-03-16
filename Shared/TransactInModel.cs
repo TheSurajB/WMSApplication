@@ -1,20 +1,23 @@
-﻿
-
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace WMSAPP.Shared
 {
-    public class Transact
+    public class TransactInModel
     {
-        public int ID { get; set; }
-        [Required]
+        public int ID { get; set; }       
         public string? SlipSrNo { get; set; }
         [Required]
         public string? VehicleNo { get; set; }
+        [Required]
         public string? Zone { get; set; }
 
         [Required]
-        [StringLength(7, ErrorMessage = "LogsheetNo is too long.")]
+       // [StringLength(7, ErrorMessage = "LogsheetNo is too long.")]
         public int? LogsheetNo { get; set; }
         public string? WBINImage { get; set; }
         public string? WBOutImage { get; set; }
@@ -28,9 +31,7 @@ namespace WMSAPP.Shared
         public int? PrintStatus { get; set; }
 
         [Required]
-        public decimal? WeightIn { get; set; }
-
-        [Required]
+        public decimal? WeightIn { get; set; }    
         public decimal? WeightOut { get; set; }
         public decimal? ActualNetWeight { get; set; }
         public int? UpdatedByIn { get; set; }

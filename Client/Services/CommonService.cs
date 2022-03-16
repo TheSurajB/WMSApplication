@@ -14,6 +14,8 @@ namespace WMSAPP.Client.Services
             _httpClient = httpClient;
         }
         public Transact objTransact { get; set; } = new Transact();
+
+        public List<Transact> transactList { get; set; } = new List<Transact>();
         public UserModel objUserModel { get; set; } = new UserModel();
         public List<WorkCodeModel> workCodeModelList { get; set; } = new List<WorkCodeModel>();
         public async Task<List<WardModel>> GetWards()
@@ -71,6 +73,14 @@ namespace WMSAPP.Client.Services
             return workCodeModelList;
             // _navigationManager.NavigateTo("superheroes");
         }
+
+        private async Task<List<Transact>> SetTransactList(HttpResponseMessage result)
+        {
+            var response = await result.Content.ReadFromJsonAsync<List<Transact>>();
+            transactList = response;
+            return transactList;
+            // _navigationManager.NavigateTo("superheroes");
+        }
         private async Task<Transact> SetTransact(HttpResponseMessage result)
         {
             var response = await result.Content.ReadFromJsonAsync<Transact>();
@@ -100,6 +110,18 @@ namespace WMSAPP.Client.Services
         {
             var result = await _httpClient.PostAsJsonAsync($"api/common/userlogin", transact);
             return await SetUser(result);
+        }
+
+        public async Task<Transact> GetLogsheetData(Transact transact)
+        {
+            var result = await _httpClient.PostAsJsonAsync($"api/common/getlogsheetdata", transact);
+            return await SetTransact(result);
+        }
+
+        public async Task<Transact> GetVehicleDetail(Transact transact)
+        {
+            var result = await _httpClient.PostAsJsonAsync($"api/common/getvehicledetail", transact);
+            return await SetTransact(result);
         }
     }
 }

@@ -189,11 +189,11 @@ namespace WMSAPP.Server.Controllers
         }
 
         [HttpPost("addtransactdata")]
-        public async Task<IActionResult> AddTransactData(Transact objTransact)
+        public async Task<IActionResult> AddTransactData(TransactInModel objTransact)
         {
 
             DataSet ds = allReportContent.AddTransactData(objTransact);
-            Transact trans =new Transact ();
+            TransactInModel trans =new TransactInModel();
             if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
             {
                 trans.SlipSrNo =Convert.ToString( ds.Tables[0].Rows[0]["SlipSrNo"]);
@@ -203,7 +203,7 @@ namespace WMSAPP.Server.Controllers
         }
 
         [HttpPost("updatetransactdata")]
-        public async Task<IActionResult> UpdateTransactData(Transact objTransact)
+        public async Task<IActionResult> UpdateTransactData(TransactOutModel objTransact)
         {
 
             DataSet ds = allReportContent.UpdateTransactData(objTransact);
@@ -309,5 +309,45 @@ namespace WMSAPP.Server.Controllers
             await Task.Yield();
             return Ok(userModel);
         }
+
+
+        [HttpPost("getlogsheetdata")]
+        public async Task<IActionResult> GetLogsheetData(Transact objTransact)
+        {
+            DataSet ds = allReportContent.GetLogsheetData(objTransact);
+            Transact trans = new Transact();
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                trans.VehicleNo = Convert.ToString(ds.Tables[0].Rows[0]["VehicleNo"]);
+            }
+            await Task.Yield();
+            return Ok(trans);
+        }
+
+        [HttpPost("getvehicledetail")]
+        public async Task<ActionResult<Transact>> GetVehicleDetail(Vehicle vehicle)
+        {           
+            DataSet ds = allReportContent.GetVehicleData(vehicle);
+
+        Transact vehicleList = new Transact();
+            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+            {
+                vehicleList =new Transact
+                {
+                    WorkCodeID = Convert.ToInt32(ds.Tables[0].Rows[i]["WorkcodeID"]),
+                    VehicleNo = Convert.ToString(ds.Tables[0].Rows[i]["VehicleNo"]),
+                    Agency = Convert.ToString(ds.Tables[0].Rows[i]["AgencyName"]),
+                    TareWt = Convert.ToDecimal(ds.Tables[0].Rows[i]["VehicleTW"]),
+                    Ward= Convert.ToString(ds.Tables[0].Rows[i]["Ward"]),
+                };
+
+            }
+
+            await Task.Yield();
+            return Ok(vehicleList);
+
+
+        }
+
     }
 }

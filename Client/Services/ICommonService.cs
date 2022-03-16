@@ -17,6 +17,7 @@ namespace WMSAPP.Client.Services
         Task<List<Transact>> GetTransactData();
         Task<Transact> GetTransactDataBySlipNo(string id);
         Task<UserModel> Login(UserModel transact);
-     
+        Task<Transact> GetLogsheetData(Transact transact);
+        Task<Transact> GetVehicleDetail(Transact transact);
     }
 }

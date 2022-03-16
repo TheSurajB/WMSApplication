@@ -1,6 +1,7 @@
 ﻿@page "/transactin"
 @inject ICommonService CommonService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
 
 <PageTitle>Transact IN</PageTitle>
 
@@ -20,60 +21,74 @@
              </div>
                 <div class="col-md-6">
                  <label for="TransDateTimeIn" class="form-label">Date</label>
-               <InputText id="TransDateTimeIn"  @bind-Value="@TransDateTimeIn" class="form-control"></InputText>
+               <InputText id="TransDateTimeIn"  @bind-Value="@TransDateTimeIn" class="form-control" disabled="@isDisable"></InputText>
              </div>
             <div class="col-md-6">
                  <label for="Zone" class="form-label">Zone</label>
-                  <InputSelect  @bind-Value="transact.Zone" class="form-select">
+                  <InputSelect  ValueExpression="@(()=>transact.Zone)" 
+                                           Value="@transact.Zone" 
+                 ValueChanged="@((string value) => OnZoneValueChanged(value ))" class="form-select">
                         <option>@InitialText</option>
                         @foreach (var productType in zoneList)
                             {
-                                <option value="@productType.Zone">@productType.Zone</option>
+                                                <option value="@productType.Zone">@productType.Zone</option>
                             }
             </InputSelect>
             </div>
              <div class="col-md-6">
                  <label for="DisplayTime" class="form-label">Time</label>
-               <InputText id="DisplayTime" @bind-Value="transact.DisplayTime" class="form-control"></InputText>
+               <InputText id="DisplayTime" @bind-Value="transact.DisplayTime" class="form-control" disabled="@isDisable"></InputText>
              </div>
-              <div class="col-md-6">
-             <label for="VehicleTW" class="form-label">Vehicle No</label>           
-           <InputSelect   class="form-select"  ValueExpression="@(()=>transact.VehicleNo)" 
+                 <div class="col-md-6">
+                 <label for="VehicleNo" class="form-label">Vehicle No </label>
+               <InputText id="VehicleNo" ValueExpression="@(()=>transact.VehicleNo)" 
                                            Value="@transact.VehicleNo" 
-                 ValueChanged="@((string value) => OnValueChanged(value ))"
-                                   >
-                                       <option>@InitialText</option>
+                 ValueChanged="@((string value) => OnValueChanged(value ))" class="form-control" disabled="@isVehDisable" ></InputText>
+               <datalist id="VehicleNo">
                             @foreach (var productType in vehicleList)
                             {
-                                <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                                       <option>@productType.VehicleNo</option>
                             }
-            </InputSelect>
-        </div>
+               </datalist>
+             </div>
+                    @*   <div class="col-md-6">
+                        <label for="VehicleTW" class="form-label">Vehicle No</label>           
+                        <InputSelect   class="form-select"  ValueExpression="@(()=>transact.VehicleNo)" 
+                        Value="@transact.VehicleNo" 
+                        ValueChanged="@((string value) => OnValueChanged(value ))"
+                        disabled="@isVehDisable"  >
+                        <option>@InitialText</option>
+                        @foreach (var productType in vehicleList)
+                        {
+                        <option value="@productType.VehicleNo">@productType.VehicleNo</option>
+                        }
+                        </InputSelect>
+                        </div>*@
            <div class="col-md-6">
-             <label for="WeightIn" class="form-label">Gross Weight</label>           
-             <InputNumber id="WeightIn" @bind-Value="transact.WeightIn" class="form-control"></InputNumber>
+             <label for="WeightIn" class="form-label">Gross Weight(KG)</label>           
+             <InputNumber id="WeightIn" @bind-Value="transact.WeightIn" class="form-control" disabled="@isDisable"></InputNumber>
            </div>
            <div class="col-md-6">
-             <label for="TypeOfMaterial" class="form-label">Solid Wast</label>           
+             <label for="TypeOfMaterial" class="form-label">Solid Waste</label>           
            <InputSelect  @bind-Value="transact.TypeOfMaterial" class="form-select">
                  <option>@InitialText</option>
                             @foreach (var productType in materialTypeModelList)
                             {
-                                <option value="@productType.MaterialTypeName">@productType.MaterialTypeName</option>
+                                                <option value="@productType.MaterialTypeName">@productType.MaterialTypeName</option>
                             }
             </InputSelect>
            </div>
        <div class="col-md-6">
-                 <label for="TareWt" class="form-label">Tare Wt</label>
-                <InputNumber id="TareWt" @bind-Value="transact.TareWt" class="form-control"></InputNumber>
+                 <label for="TareWt" class="form-label">Tare Wt(KG)</label>
+                <InputNumber id="TareWt" @bind-Value="transact.TareWt" class="form-control" disabled="@isDisable"></InputNumber>
              </div>
               <div class="col-md-6">
              <label for="Agency" class="form-label">Agency</label>           
-           <InputSelect  @bind-Value="transact.Agency" class="form-select">
+           <InputSelect  @bind-Value="transact.Agency" class="form-select" disabled="@isDisable">
                  <option>@InitialText</option>
                             @foreach (var agency in agencyList)
                             {
-                                <option value="@agency.AgencyName">@agency.AgencyName</option>
+                                                <option value="@agency.AgencyName">@agency.AgencyName</option>
                             }
             </InputSelect>
            </div>
@@ -83,17 +98,17 @@
                  <option>@InitialText</option>
                             @foreach (var productType in commonModelList)
                             {
-                                <option value="@productType.Name">@productType.Name</option>
+                                                <option value="@productType.Name">@productType.Name</option>
                             }
             </InputSelect>
            </div>
             <div class="col-md-6">
              <label for="Ward" class="form-label">Ward</label>           
-           <InputSelect  @bind-Value="transact.Ward" class="form-select">
+           <InputSelect  @bind-Value="transact.Ward" class="form-select" disabled="@isDisable">
                  <option>@InitialText</option>
                             @foreach (var productType in wardList)
                             {
-                                <option value="@productType.WardName">@productType.WardName</option>
+                                                <option value="@productType.WardName">@productType.WardName</option>
                             }
             </InputSelect>
            </div>
@@ -103,20 +118,21 @@
                  <option>@InitialText</option>
                             @foreach (var productType in commonModelList)
                             {
-                                <option value="@productType.Name">@productType.Name</option>
+                                                <option value="@productType.Name">@productType.Name</option>
                             }
             </InputSelect>
            </div>
             <div class="col-md-6">
-             <label for="WorkCode" class="form-label">Work Code</label>           
-           <InputSelect  @bind-Value="transact.WorkCode" class="form-select">
+             <label for="WorkCodeID" class="form-label">Work Code</label>           
+           <InputSelect  @bind-Value="transact.WorkCodeID" class="form-select" disabled="@isDisable">
                  <option>@InitialText</option>
                             @foreach (var wc in workCodeModelList)
                             {
-                                <option value="@wc.WorkcodeID">@wc.Workcode</option>
+                                                <option value="@wc.WorkcodeID">@wc.Workcode</option>
                             }
             </InputSelect>
            </div>
+
                     @* <div class="mb-0">
                         <img src="@product.ImageUrl" />
                         </div>*@
@@ -132,84 +148,91 @@
         <hr />
 
          <div class="panel-footer"><!-- panel-footer -->
-            @*  <button class="btn-delete" @onclick="@(() => DeleteItem(item))">Delete</button>*@
-         <button type="submit" class="btn btn-primary">@btnText</button>
-          <button type="button" class="btn btn-primary">Store</button>
-           <button type="button" class="btn btn-primary">update</button>
+                @*  <button class="btn-delete" @onclick="@(() => DeleteItem(item))">Delete</button>*@
+         <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-primary mr-2">Print Slip</button>
+          <button type="button" class="btn btn-primary mr-2">Cancel Last Slip</button>
           </div>
+            <hr />
          </div>
          </div>
     <ValidationSummary></ValidationSummary>
         </EditForm>
  <div class="container">
   <div class="row">
+      <div class="col-12">
        <div class="table-responsive">
-@if (transactList == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Slip Sr No</th>
-                <th>Vehicle No</th>
-                <th>Logsheet No</th>     
-                <th>Trans Date Time In</th>
-                <th>Trans Date Time Out</th>
-                <th>Type Of Material</th>  
-                <th>Agency</th>
-                <th>Cancel Status</th>
-                <th>Print Status</th>  
-                <th>Weight In</th>
-                <th>Weigh tOut</th>
-                <th>Actual NetWeight</th>  
-                <th>On BMC Duty</th>
-                <th>TPC Cover</th>
-                <th>Remarks</th>  
-                <th>Updated By In</th>
-                <th>Updated By Out</th>
-              
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var transact in transactList)
-            {
-                <tr>
-                    <td>@transact.SlipSrNo</td>
-                    <td>@transact.VehicleNo</td>
-                    <td>@transact.LogsheetNo</td>
-                    <td>@transact.TransDateTimeIn</td>
-                     <td>@transact.TransDateTimeOut</td>
-                    <td>@transact.TypeOfMaterial</td>
-                    <td>@transact.Agency</td>
-                    <td>@transact.CancelStatus</td>
-                    <td>@transact.PrintStatus</td>
-                    <td>@transact.WeightIn</td>
-                    <td>@transact.WeightOut</td>
-                    <td>@transact.ActualNetWeight</td>
-                    <td>@transact.OnBMCDuty</td>
-                    <td>@transact.TPCCover</td>
-                    <td>@transact.Remarks</td>
-                    <td>@transact.UpdatedByIn</td>
-                   <td>@transact.UpdatedByOut</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+                @if (transactList == null)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Slip Sr No</th>
+                                <th>Vehicle No</th>
+                                <th>Logsheet No</th>     
+                                <th>Trans Date Time In</th>
+                                <th>Trans Date Time Out</th>
+                                <th>Type Of Material</th>  
+                                <th>Agency</th>
+                                <th>Cancel Status</th>
+                                <th>Print Status</th>  
+                                <th>Weight In</th>
+                                <th>Weigh tOut</th>
+                                <th>Actual NetWeight</th>  
+                                <th>On BMC Duty</th>
+                                <th>TPC Cover</th>
+                                <th>Remarks</th>  
+                                <th>Updated By In</th>
+                                <th>Updated By Out</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var transact in transactList)
+                            {
+                                                <tr>
+                                                    <td>@transact.SlipSrNo</td>
+                                                    <td>@transact.VehicleNo</td>
+                                                    <td>@transact.LogsheetNo</td>
+                                                    <td>@transact.TransDateTimeIn</td>
+                                                     <td>@transact.TransDateTimeOut</td>
+                                                    <td>@transact.TypeOfMaterial</td>
+                                                    <td>@transact.Agency</td>
+                                                    <td>@transact.CancelStatus</td>
+                                                    <td>@transact.PrintStatus</td>
+                                                    <td>@transact.WeightIn</td>
+                                                    <td>@transact.WeightOut</td>
+                                                    <td>@transact.ActualNetWeight</td>
+                                                    <td>@transact.OnBMCDuty</td>
+                                                    <td>@transact.TPCCover</td>
+                                                    <td>@transact.Remarks</td>
+                                                    <td>@transact.UpdatedByIn</td>
+                                                   <td>@transact.UpdatedByOut</td>
+                                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+</div>
 </div>
 </div>
 </div>
 
 @code {
+
     [Parameter]
     public int Id { get; set; }
+     public Transact transactMap { get; set; }
     public int JobCodeEntryType { get; set; }
     [Parameter] public string InitialText { get; set; } = "--Select--";
+    private bool isDisable { get; set; }
+    private bool isVehDisable { get; set; }
     private System.Threading.Timer? timer;
-    Transact transact = new Transact();
+    TransactInModel transact = new TransactInModel();
     private List<WardModel> wardList = new List<WardModel>();
     private List<WorkCodeModel> workCodeModelList = new List<WorkCodeModel>();
     private List<CommonModel> commonModelList = new List<CommonModel>();
@@ -226,26 +249,31 @@ else
         // transact.DisplayTime = DateTime.Now.ToShortTimeString();
         try
         {
+
+
+            isDisable = true;
+            isVehDisable = true;
             JobCodeEntryType = 0;
             WorkCodeModel workCodeModel = new WorkCodeModel();
             Vehicle vehicle = new Vehicle();
             transact.WeightIn = 123;
             btnText = "Add";
             await Task.Yield();
-            vehicleList = await CommonService.GetVehicles();
+            zoneList = await CommonService.GetZones();
             wardList = await CommonService.GetWards();
-            workCodeModelList = await CommonService.GetWorkCodes(workCodeModel);
             commonModelList = await CommonService.GetYesNo();
             materialTypeModelList = await CommonService.GetMaterialType();
             agencyList = await CommonService.GetAgencies(0);
-            zoneList = await CommonService.GetZones();
+            workCodeModelList = await CommonService.GetWorkCodes(workCodeModel);
+            vehicleList = await CommonService.GetVehicles();
+
             transactList = await CommonService.GetTransactData();
 
             timer = new System.Threading.Timer(async (object? stateInfo) =>
         {
             transact.DisplayTime = DateTime.Now.ToString("HH:mm");
             StateHasChanged();
-        }, new System.Threading.AutoResetEvent(false), 1, 1); 
+        }, new System.Threading.AutoResetEvent(false), 1, 1);
         }
         catch (Exception ex)
         {
@@ -263,10 +291,10 @@ else
         transact.JobCodeEntryType = JobCodeEntryType;
         transact.TransDateTimeIn = DateTime.Now;
         string str = "gdd";
-        await Task.Yield();
-         var result =await CommonService.AddTransactData(transact);
+        
+        var result = await CommonService.AddTransactData(CustomMapper.TransactInModelToTransact(transact));
         var tt = result;
-         transactList = await CommonService.GetTransactData();
+        transactList = await CommonService.GetTransactData();
         //if (product.IsNew)
         //{
         //    var result = await ProductService.CreateProduct(product);
@@ -276,19 +304,55 @@ else
         //{
         //  product.IsNew = false;
         // vehicle = await VehicleService.UpdateProduct(product);
-      //  NavigationManager.NavigateTo($"admin/product/{transact.SlipSrNo}", true);
+        //  NavigationManager.NavigateTo($"admin/product/{transact.SlipSrNo}", true);
         // }
     }
     async void DeleteVehicle()
     {
         await Task.Yield();
-       
+
     }
-    private Task OnValueChanged(string value)
+    private async Task OnValueChanged(string value)
+    {
+        Transact tr = new Transact();
+        transact.VehicleNo = value;
+        tr.VehicleNo = value;
+        var vehDetail = await CommonService.GetVehicleDetail(tr);
+        transact.Agency = vehDetail.Agency;
+        transact.WorkCodeID = vehDetail.WorkCodeID;
+        transact.TareWt = vehDetail.TareWt;
+        transact.Ward = vehDetail.Ward;
+
+        // return Task.CompletedTask;
+    }
+    private async Task OnZoneValueChanged(string value)
     {
         // Assign the selected value to the Model 
-        transact.VehicleNo = value;
-        return Task.CompletedTask;
-    } 
+        Transact trans = new Transact();
+        trans.Zone = value;
+        trans.LogsheetNo = transact.LogsheetNo;
+        var result = await CommonService.GetLogsheetData(trans);
+        if (!string.IsNullOrEmpty(result.VehicleNo))
+        {
+            JobCodeEntryType = 1;
+            var vehDetail = await CommonService.GetVehicleDetail(result);
+            transact.VehicleNo = result.VehicleNo;
+            transact.Agency = vehDetail.Agency;
+            transact.WorkCodeID = vehDetail.WorkCodeID;
+            transact.TareWt = vehDetail.TareWt;
+            transact.Ward = vehDetail.Ward;
+        }
+        else
+        {
+            isVehDisable = false;
+            await JsRuntime.InvokeVoidAsync("alert", "There are no vehicles found for this logsheet.Please enter vehicle number.!"); // Alert
 
+            //bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?"); // Confirm
+            //string prompted = await JsRuntime.InvokeAsync<string>("prompt", "Take some input:"); // Prompt
+        }
+        await Task.Yield();
+        transact.Zone = value;
+
+        // return Task.CompletedTask;
+    } 
 }
