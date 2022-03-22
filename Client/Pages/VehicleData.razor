@@ -1,12 +1,36 @@
 ﻿@page "/vehicledata"
 @inject IVehicleService VehicleService
 @inject NavigationManager NavigationManager
+@using System.Net.Http.Json
+@namespace MudBlazor
 
 <PageTitle>Vehicle List</PageTitle>
 
 <h1>Vehicle List</h1>
 
-
+<MudDataGrid MultiSelection="true" Items="@vehicles" Sortable="true" Filterable="true" QuickFilter="@_quickFilter"
+ReadOnly="@_readOnly" 
+>
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <Column T="Vehicle" Field="VehicleID" Title="Nr" Sortable="false" Filterable="false" />
+        <Column T="Vehicle" Field="VehicleNo" SortBy="@_sortBy"/>
+        <Column T="Vehicle" Field="VehicleType"  />
+        <Column T="Vehicle" CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudButton Size="@Size.Small" OnClick="() => OnValueChanged(context.VehicleNo)" >View</MudButton>
+            </CellTemplate>
+        </Column>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Vehicle" />
+    </PagerContent>
+</MudDataGrid>
 
 @if (vehicles == null)
 {
@@ -39,10 +63,44 @@ else
 @code {
     List<Vehicle> vehicles;
     private AgencyModel[]?  agencyModels;
+    // private IEnumerable<Element> Elements = new List<Element>();
+    private string _searchString;
+    private bool _sortNameByLength;
+    private bool _readOnly;
+    private bool _isCellEditMode;
+    private List<string> _events = new();
+    private bool _editTriggerRowClick;
+    // custom sort by name length
+    private Func<Vehicle, object> _sortBy => x =>
+    {
+        if (_sortNameByLength)
+            return x.VehicleNo.Length;
+        else
+            return x.VehicleNo;
+    };
+    // quick filter - filter gobally across multiple columns with the same input
+    private Func<Vehicle, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.VehicleNo.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (x.VehicleType.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if ($"{x.VehicleID} {x.VehicleID} {x.VehicleNo}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
 
     protected override async Task OnInitializedAsync()
     {
         try{
+            // Vehicle = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
             vehicles = await VehicleService.GetVehicles();        
         }
         catch(Exception ex)
@@ -51,4 +109,31 @@ else
         }
 
     }
-}
+
+    // events
+    void StartedEditingItem(string item)
+    {
+        var tt = item;
+        // _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    void CancelledEditingItem(Vehicle item)
+    {
+        _events.Insert(0, $"Event = CancelledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    void CommittedItemChanges(Vehicle item)
+    {
+        _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+    //async Task OnValueChanged(MouseEventArgs args)
+    //{
+    //    await Task.Yield();
+    //   /// var tt = item;
+    //}
+     async Task OnValueChanged(string item)
+    {
+        await Task.Yield();
+          var tt = item;
+    }
+    }

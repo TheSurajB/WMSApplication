@@ -4,6 +4,7 @@ using WMSAPP.Client;
 using WMSAPP.Client.Services;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -15,5 +16,8 @@ builder.Services.AddScoped<ICommonService, CommonService>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddMudServices();
+builder.Services.AddMudEventManager();
+builder.Services.AddMudBlazorDialog();
 
 await builder.Build().RunAsync();

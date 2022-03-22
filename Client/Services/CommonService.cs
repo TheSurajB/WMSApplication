@@ -57,13 +57,13 @@ namespace WMSAPP.Client.Services
 
         public async Task<Transact> AddTransactData(Transact transact)
         {
-          var result=  await  _httpClient.PostAsJsonAsync($"api/common/addtransactdata", transact);
+          var result=  await  _httpClient.PostAsJsonAsync("api/common/addtransactdata", transact);
             return  await SetTransact(result);
         }
 
         public async Task<Transact> UpdateTransactData(Transact transact)
         {
-            var result = await _httpClient.PostAsJsonAsync($"api/common/updatetransactdata", transact);
+            var result = await _httpClient.PostAsJsonAsync("api/common/updatetransactdata", transact);
             return await SetTransact(result);
         }
         private async Task<List<WorkCodeModel>> SetWorkCode(HttpResponseMessage result)
@@ -114,14 +114,20 @@ namespace WMSAPP.Client.Services
 
         public async Task<Transact> GetLogsheetData(Transact transact)
         {
-            var result = await _httpClient.PostAsJsonAsync($"api/common/getlogsheetdata", transact);
+            var result = await _httpClient.PostAsJsonAsync("api/common/getlogsheetdata", transact);
             return await SetTransact(result);
         }
 
         public async Task<Transact> GetVehicleDetail(Transact transact)
         {
-            var result = await _httpClient.PostAsJsonAsync($"api/common/getvehicledetail", transact);
+            var result = await _httpClient.PostAsJsonAsync("api/common/getvehicledetail", transact);
             return await SetTransact(result);
         }
+        public async Task<Transact> CancelSlip(Transact transact)
+        {
+            var result = await _httpClient.PostAsJsonAsync("api/common/slipcancel", transact);
+            return await SetTransact(result);
+        }
+
     }
 }

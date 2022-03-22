@@ -168,7 +168,7 @@ namespace WMSAPP.Server.Repository
             }
             return ds;
         }
-        public DataSet AddTransactData(TransactInModel transactModel)
+        public DataSet AddTransactData(Transact transactModel)
         {
             try
             {
@@ -213,7 +213,7 @@ namespace WMSAPP.Server.Repository
             }
         }
 
-        public DataSet UpdateTransactData(TransactOutModel transactModel)
+        public DataSet UpdateTransactData(Transact transactModel)
         {
             try
             {
@@ -236,6 +236,28 @@ namespace WMSAPP.Server.Repository
                 par[5].Value = transactModel.UpdatedByOut;
                 par[6].Value = transactModel.Remarks;
                 DataSet ds = sQLDAL.ExecuteDatasetSP("spTransact_UpdateRecord", par);
+                return ds;
+
+            }
+            catch (Exception w)
+            {
+                throw new Exception(w.Message);
+            }
+        }
+
+        public DataSet CancelTransactData(Transact transactModel)
+        {
+            try
+            {
+                sQLDAL = new SQLDAL();
+                SqlParameter[] par ={
+                                        new SqlParameter("@SlipSrNo",SqlDbType.NVarChar),
+                                        
+
+                                    };
+                par[0].Value = transactModel.SlipSrNo;
+
+                DataSet ds = sQLDAL.ExecuteDatasetSP("spTransact_CancelRecord", par);
                 return ds;
 
             }

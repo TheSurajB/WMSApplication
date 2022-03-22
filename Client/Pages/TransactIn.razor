@@ -2,7 +2,8 @@
 @inject ICommonService CommonService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
-
+@namespace MudBlazor
+@inject Blazored.LocalStorage.ILocalStorageService iLocalStorage
 <PageTitle>Transact IN</PageTitle>
 
 
@@ -31,7 +32,7 @@
                         <option>@InitialText</option>
                         @foreach (var productType in zoneList)
                             {
-                                                <option value="@productType.Zone">@productType.Zone</option>
+                                                        <option value="@productType.Zone">@productType.Zone</option>
                             }
             </InputSelect>
             </div>
@@ -47,7 +48,7 @@
                <datalist id="VehicleNo">
                             @foreach (var productType in vehicleList)
                             {
-                                       <option>@productType.VehicleNo</option>
+                                               <option>@productType.VehicleNo</option>
                             }
                </datalist>
              </div>
@@ -74,7 +75,7 @@
                  <option>@InitialText</option>
                             @foreach (var productType in materialTypeModelList)
                             {
-                                                <option value="@productType.MaterialTypeName">@productType.MaterialTypeName</option>
+                                                        <option value="@productType.MaterialTypeName">@productType.MaterialTypeName</option>
                             }
             </InputSelect>
            </div>
@@ -88,7 +89,7 @@
                  <option>@InitialText</option>
                             @foreach (var agency in agencyList)
                             {
-                                                <option value="@agency.AgencyName">@agency.AgencyName</option>
+                                                        <option value="@agency.AgencyName">@agency.AgencyName</option>
                             }
             </InputSelect>
            </div>
@@ -98,7 +99,7 @@
                  <option>@InitialText</option>
                             @foreach (var productType in commonModelList)
                             {
-                                                <option value="@productType.Name">@productType.Name</option>
+                                                        <option value="@productType.Name">@productType.Name</option>
                             }
             </InputSelect>
            </div>
@@ -108,7 +109,7 @@
                  <option>@InitialText</option>
                             @foreach (var productType in wardList)
                             {
-                                                <option value="@productType.WardName">@productType.WardName</option>
+                                                        <option value="@productType.WardName">@productType.WardName</option>
                             }
             </InputSelect>
            </div>
@@ -118,7 +119,7 @@
                  <option>@InitialText</option>
                             @foreach (var productType in commonModelList)
                             {
-                                                <option value="@productType.Name">@productType.Name</option>
+                                                        <option value="@productType.Name">@productType.Name</option>
                             }
             </InputSelect>
            </div>
@@ -128,7 +129,7 @@
                  <option>@InitialText</option>
                             @foreach (var wc in workCodeModelList)
                             {
-                                                <option value="@wc.WorkcodeID">@wc.Workcode</option>
+                                                        <option value="@wc.WorkcodeID">@wc.Workcode</option>
                             }
             </InputSelect>
            </div>
@@ -150,72 +151,115 @@
          <div class="panel-footer"><!-- panel-footer -->
                 @*  <button class="btn-delete" @onclick="@(() => DeleteItem(item))">Delete</button>*@
          <button type="submit" class="btn btn-primary">Save</button>
-          <button type="button" class="btn btn-primary mr-2">Print Slip</button>
-          <button type="button" class="btn btn-primary mr-2">Cancel Last Slip</button>
+          <button type="button" class="btn btn-primary mr-2" @onclick="@PrintSlip">Print Slip</button>
+          <button type="button" class="btn btn-primary mr-2" @onclick="@CancelSlip">Cancel Last Slip</button>
           </div>
             <hr />
          </div>
          </div>
     <ValidationSummary></ValidationSummary>
         </EditForm>
+
+
+
  <div class="container">
   <div class="row">
       <div class="col-12">
        <div class="table-responsive">
                 @if (transactList == null)
                 {
-                    <p><em>Loading...</em></p>
+                            <p><em>Loading...</em></p>
                 }
                 else
                 {
-                    <table class="table table-bordered">
+
+         <MudDataGrid MultiSelection="true" Items="@transactList" Sortable="true" Filterable="true" QuickFilter="@_quickFilter"
+ReadOnly="@_readOnly" 
+>
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Transact List</MudText>
+                <MudSpacer />
+                <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            </ToolBarContent>
+            <Columns>
+                <Column T="Transact" Field="ID" Title="Nr" Sortable="false" Filterable="false" Visible="false"/>
+                <Column T="Transact" Field="SlipSrNo" Title="Slip Sr No" SortBy="@_sortBy"/>
+                <Column T="Transact" Field="VehicleNo" Title="Vehicle No" SortBy="@_sortBy"/>
+                 <Column T="Transact" Field="LogsheetNo" Title="Logsheet No" SortBy="@_sortBy"/>
+                  <Column T="Transact" Field="TransDateTimeIn" Title="In Time" />
+                   <Column T="Transact" Field="TypeOfMaterial" Title="Type Of Material" />
+                    <Column T="Transact" Field="Agency" Title="Agency" />
+                     <Column T="Transact" Field="WeightIn"  Title="Weight In"/>
+                      <Column T="Transact" Field="TransDateTimeOut"  Title="Out Time"/>
+                       <Column T="Transact" Field="WeightOut"  Title="Weight Out"/>
+                        <Column T="Transact" Field="ActualNetWeight"  Title="Actual Net Weight"/>
+                         <Column T="Transact" Field="OnBMCDuty"  Title="On BMC Duty"/>
+                          <Column T="Transact" Field="TPCCover"  Title="TPC Cover"/>
+                              <Column T="Transact" Field="PrintStatus"  Title="Print Status"/>
+                          <Column T="Transact" Field="CancelStatus"  Title="Cancel Status"/>
+                            <Column T="Transact" Field="UpdatedByIn"  Title="Updated By In"/>
+                          <Column T="Transact" Field="UpdatedByOut"  Title="Updated By Out"/>
+                <Column T="Transact" CellClass="d-flex justify-end">
+                    <CellTemplate>
+                        <MudButton Size="@Size.Small" OnClick="() => ViewINImage(context.VehicleNo)" >View</MudButton>
+                    </CellTemplate>
+                </Column>
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="Transact" />
+            </PagerContent>
+        </MudDataGrid>
+
+
+                    @*<table class="table table-bordered">
                         <thead>
-                            <tr>
-                                <th>Slip Sr No</th>
-                                <th>Vehicle No</th>
-                                <th>Logsheet No</th>     
-                                <th>Trans Date Time In</th>
-                                <th>Trans Date Time Out</th>
-                                <th>Type Of Material</th>  
-                                <th>Agency</th>
-                                <th>Cancel Status</th>
-                                <th>Print Status</th>  
-                                <th>Weight In</th>
-                                <th>Weigh tOut</th>
-                                <th>Actual NetWeight</th>  
-                                <th>On BMC Duty</th>
-                                <th>TPC Cover</th>
-                                <th>Remarks</th>  
-                                <th>Updated By In</th>
-                                <th>Updated By Out</th>
+                        <tr>
+                        <th>Slip Sr No</th>
+                        <th>Vehicle No</th>
+                        <th>Logsheet No</th>     
+                        <th>Trans Date Time In</th>
+                        <th>Trans Date Time Out</th>
+                        <th>Type Of Material</th>  
+                        <th>Agency</th>
+                        <th>Cancel Status</th>
+                        <th>Print Status</th>  
+                        <th>Weight In</th>
+                        <th>Weigh tOut</th>
+                        <th>Actual NetWeight</th>  
+                        <th>On BMC Duty</th>
+                        <th>TPC Cover</th>
+                        <th>Remarks</th>  
+                        <th>Updated By In</th>
+                        <th>Updated By Out</th>
 
                         </tr>
                         </thead>
                         <tbody>
-                            @foreach (var transact in transactList)
-                            {
-                                                <tr>
-                                                    <td>@transact.SlipSrNo</td>
-                                                    <td>@transact.VehicleNo</td>
-                                                    <td>@transact.LogsheetNo</td>
-                                                    <td>@transact.TransDateTimeIn</td>
-                                                     <td>@transact.TransDateTimeOut</td>
-                                                    <td>@transact.TypeOfMaterial</td>
-                                                    <td>@transact.Agency</td>
-                                                    <td>@transact.CancelStatus</td>
-                                                    <td>@transact.PrintStatus</td>
-                                                    <td>@transact.WeightIn</td>
-                                                    <td>@transact.WeightOut</td>
-                                                    <td>@transact.ActualNetWeight</td>
-                                                    <td>@transact.OnBMCDuty</td>
-                                                    <td>@transact.TPCCover</td>
-                                                    <td>@transact.Remarks</td>
-                                                    <td>@transact.UpdatedByIn</td>
-                                                   <td>@transact.UpdatedByOut</td>
-                                                </tr>
-                            }
+                        @foreach (var transact in transactList)
+                        {
+                        <tr>
+                        <td>@transact.SlipSrNo</td>
+                        <td>@transact.VehicleNo</td>
+                        <td>@transact.LogsheetNo</td>
+                        <td>@transact.TransDateTimeIn</td>
+                        <td>@transact.TransDateTimeOut</td>
+                        <td>@transact.TypeOfMaterial</td>
+                        <td>@transact.Agency</td>
+                        <td>@transact.CancelStatus</td>
+                        <td>@transact.PrintStatus</td>
+                        <td>@transact.WeightIn</td>
+                        <td>@transact.WeightOut</td>
+                        <td>@transact.ActualNetWeight</td>
+                        <td>@transact.OnBMCDuty</td>
+                        <td>@transact.TPCCover</td>
+                        <td>@transact.Remarks</td>
+                        <td>@transact.UpdatedByIn</td>
+                        <td>@transact.UpdatedByOut</td>
+                        </tr>
+                        }
                         </tbody>
-                    </table>
+                            </table>*@
                 }
 </div>
 </div>
@@ -226,7 +270,7 @@
 
     [Parameter]
     public int Id { get; set; }
-     public Transact transactMap { get; set; }
+    public Transact transactMap { get; set; }
     public int JobCodeEntryType { get; set; }
     [Parameter] public string InitialText { get; set; } = "--Select--";
     private bool isDisable { get; set; }
@@ -244,6 +288,40 @@
     string btnText = "";
 
     string TransDateTimeIn = DateTime.Now.Date.ToString("dd-MM-yyyy");
+
+    private string _searchString;
+    private bool _sortNameByLength;
+    private bool _readOnly;
+    private bool _isCellEditMode;
+    private List<string> _events = new();
+    private bool _editTriggerRowClick;
+    // custom sort by name length
+    private Func<Transact, object> _sortBy => x =>
+    {
+        if (_sortNameByLength)
+            return x.VehicleNo.Length;
+        else
+            return x.VehicleNo;
+    };
+    // quick filter - filter gobally across multiple columns with the same input
+    private Func<Transact, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.VehicleNo.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (x.SlipSrNo.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if ($"{x.SlipSrNo} {x.VehicleNo}  {x.TransDateTimeIn} {x.LogsheetNo}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
+
     protected override async Task OnInitializedAsync()
     {
         // transact.DisplayTime = DateTime.Now.ToShortTimeString();
@@ -291,9 +369,10 @@
         transact.JobCodeEntryType = JobCodeEntryType;
         transact.TransDateTimeIn = DateTime.Now;
         string str = "gdd";
-        
+
         var result = await CommonService.AddTransactData(CustomMapper.TransactInModelToTransact(transact));
         var tt = result;
+        await iLocalStorage.SetItemAsync<string?>("slipno", result.SlipSrNo);
         transactList = await CommonService.GetTransactData();
         //if (product.IsNew)
         //{
@@ -354,5 +433,42 @@
         transact.Zone = value;
 
         // return Task.CompletedTask;
-    } 
+    }
+
+    async Task ViewINImage(string item)
+    {
+
+        await Task.Yield();
+        var tt = item;
+    }
+    async Task CancelSlip()
+    {
+        Transact trans = new Transact();
+        trans.SlipSrNo  = await iLocalStorage.GetItemAsStringAsync("slipno");
+        var result = await CommonService.CancelSlip(trans);
+        var tt = result;
+        await Task.Yield();
+        // var tt = item;
+    }
+    async Task PrintSlip()
+    {
+        await Task.Yield();
+        // var tt = item;
+    }
+    // events
+    void StartedEditingItem(string item)
+    {
+        var tt = item;
+        // _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    void CancelledEditingItem(Vehicle item)
+    {
+        _events.Insert(0, $"Event = CancelledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    void CommittedItemChanges(Vehicle item)
+    {
+        _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
 }

@@ -9,7 +9,7 @@ namespace WMSAPP.Shared
 {
     public class TransactInModel
     {
-        public int ID { get; set; }       
+        public int? ID { get; set; }       
         public string? SlipSrNo { get; set; }
         [Required]
         public string? VehicleNo { get; set; }

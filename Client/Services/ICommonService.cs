@@ -19,5 +19,6 @@ namespace WMSAPP.Client.Services
         Task<UserModel> Login(UserModel transact);
         Task<Transact> GetLogsheetData(Transact transact);
         Task<Transact> GetVehicleDetail(Transact transact);
+        Task<Transact> CancelSlip(Transact transact);
     }
 }

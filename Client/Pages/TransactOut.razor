@@ -1,7 +1,7 @@
 ﻿@page "/transactout"
 @inject ICommonService CommonService
 @inject NavigationManager NavigationManager
-
+@inject IJSRuntime JsRuntime
 <PageTitle>Transact Out</PageTitle>
 
 <h1>Transact Out</h1>
@@ -16,6 +16,7 @@
                     <div class="col-md-6">
                         <label for="SlipSrNo" class="form-label">Slip Sr No.</label>
                         <InputText id="SlipSrNo" Value="@transact.SlipSrNo" ValueChanged="OnValueChanged" ValueExpression="() => transact.SlipSrNo" class="form-control"></InputText>
+                         <ValidationMessage For="@(() => transact.SlipSrNo)" />  
                     </div>
                      <div class="col-md-6">
                         <label for="WeightIn" class="form-label">Gross Weight</label>
@@ -61,7 +62,7 @@
               <div class="panel-footer">
             <button type="submit" class="btn btn-primary mr-2">Update</button>
             <button type="button" class="btn btn-primary mr-2">Print Slip</button>
-          <button type="button" class="btn btn-primary mr-2">Cancel Last Slip</button>
+          <button type="button" class="btn btn-primary mr-2"  @onclick="@CancelSlip">Cancel Last Slip</button>
             </div>
         </div>
     </div>
@@ -77,7 +78,7 @@
     [Parameter] public string InitialText { get; set; } = "--Select--";
     private bool isDisable { get; set; }
     private System.Threading.Timer? timer;
-    Transact transact = new Transact();
+    TransactOutModel transact = new TransactOutModel();
 
     string btnText = "";
     string TransDateTimeOut = "";
@@ -88,8 +89,7 @@
         try
         {
             isDisable = true;
-            btnText = "Update";        
-
+            btnText = "Update";  
             timer = new System.Threading.Timer(async (object? stateInfo) =>
         {
             TransDateTimeOut = DateTime.Now.ToString("dd-MM-yyyy HH:mm");
@@ -107,9 +107,9 @@
     {
         var vehObj = transact;
         transact.UpdatedByOut = 1;
-     
-        transact.TransDateTimeOut = DateTime.Now;    
-        var result =await CommonService.UpdateTransactData(transact);
+        transact.TransDateTimeOut = DateTime.Now;
+        var obj = CustomMapper.TransactOutModelToTransact(transact);
+        var result =await CommonService.UpdateTransactData(obj);
         var tt = result;
         // transactList = await CommonService.GetTransactData();
         //if (product.IsNew)
@@ -132,10 +132,18 @@
     async void OnValueChanged(string value)
     {
         var result = await CommonService.GetTransactDataBySlipNo(value);
-        transact = result;
+        transact = CustomMapper.TransactToTransactOutModel(result);
         transact.ActualNetWeight = transact.WeightIn - transact.WeightOut;
         transact.SlipSrNo = value;
        // return Task.CompletedTask;
     } 
-
+     async Task CancelSlip()
+    {
+        Transact trans = new Transact();
+        trans.SlipSrNo  = transact.SlipSrNo;
+        var result = await CommonService.CancelSlip(trans);
+        var tt = result;
+       // await Task.Yield();
+        // var tt = item;
+    }
 }

@@ -32,6 +32,8 @@ namespace WMSAPP.Client.Services
             trans.OnBMCDuty =transactIn.OnBMCDuty;
             trans.DisplayTime =transactIn.DisplayTime;
             trans.TareWt =transactIn.TareWt;
+            trans.TransDateTimeIn = transactIn.TransDateTimeIn;
+            trans.TransDateTimeOut=transactIn.TransDateTimeOut;
             return trans;
         }
 
@@ -63,6 +65,8 @@ namespace WMSAPP.Client.Services
             trans.OnBMCDuty = transactOut.OnBMCDuty;
             trans.DisplayTime = transactOut.DisplayTime;
             trans.TareWt = transactOut.TareWt;
+            trans.TransDateTimeIn = transactOut.TransDateTimeIn;
+            trans.TransDateTimeOut = transactOut.TransDateTimeOut;
             return trans;
         }
 
@@ -95,6 +99,8 @@ namespace WMSAPP.Client.Services
             transactIn.OnBMCDuty = transact.OnBMCDuty;
             transactIn.DisplayTime = transact.DisplayTime;
             transactIn.TareWt = transact.TareWt;
+            transactIn.TransDateTimeIn = transact.TransDateTimeIn;
+            transactIn.TransDateTimeOut = transact.TransDateTimeOut;
             return transactIn;
         }
 
@@ -126,6 +132,8 @@ namespace WMSAPP.Client.Services
             transactOut.OnBMCDuty = transact.OnBMCDuty;
             transactOut.DisplayTime = transact.DisplayTime;
             transactOut.TareWt = transact.TareWt;
+            transactOut.TransDateTimeIn = transact.TransDateTimeIn;
+            transactOut.TransDateTimeOut = transact.TransDateTimeOut;
             return transactOut;
         }
     }

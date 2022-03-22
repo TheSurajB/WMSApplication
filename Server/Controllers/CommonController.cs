@@ -189,7 +189,7 @@ namespace WMSAPP.Server.Controllers
         }
 
         [HttpPost("addtransactdata")]
-        public async Task<IActionResult> AddTransactData(TransactInModel objTransact)
+        public async Task<IActionResult> AddTransactData(Transact objTransact)
         {
 
             DataSet ds = allReportContent.AddTransactData(objTransact);
@@ -203,7 +203,7 @@ namespace WMSAPP.Server.Controllers
         }
 
         [HttpPost("updatetransactdata")]
-        public async Task<IActionResult> UpdateTransactData(TransactOutModel objTransact)
+        public async Task<IActionResult> UpdateTransactData(Transact objTransact)
         {
 
             DataSet ds = allReportContent.UpdateTransactData(objTransact);
@@ -348,6 +348,21 @@ namespace WMSAPP.Server.Controllers
 
 
         }
+
+        [HttpPost("slipcancel")]
+        public async Task<ActionResult<Transact>> CancelSlip(Transact objTransact)
+        {
+
+            DataSet ds = allReportContent.CancelTransactData(objTransact);
+            Transact trans = new Transact();
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                trans.SlipSrNo = Convert.ToString(ds.Tables[0].Rows[0]["SlipSrNo"]);
+            }
+            await Task.Yield();
+            return Ok(trans);
+        }
+
 
     }
 }
